@@ -1,0 +1,50 @@
+name: Linux
+
+on:
+  push:
+    branches: [ main, metrics ]
+    paths-ignore:
+    - '**.md'
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        version: [netcoreapp3.1,net5.0,net6.0]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up QEMU
+      id: qemu
+      uses: docker/setup-qemu-action@v1
+
+    - name: Install dependencies
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
+        arm64v8/ubuntu:latest \
+        bash -exc 'apt-get update && apt-get -y install curl wget sudo git && \
+        uname -m && \
+        curl -SL -o dotnet.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-sdk-latest-linux-arm64.tar.gz && \
+        sudo mkdir -p /usr/share/dotnet && \
+        sudo tar -zxf dotnet.tar.gz -C /usr/share/dotnet && \
+        sudo ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet && \
+        dotnet --version && \
+        dotnet restore'
+
+    - name: Build
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
+        arm64v8/ubuntu:latest \
+        bash -exc 'apt-get update && apt-get -y install curl wget sudo git && \
+        uname -m && \
+        dotnet build --configuration Release --no-restore'
+
+    - name: Test ${{ matrix.version }}
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
+        arm64v8/ubuntu:latest \
+        bash -exc 'apt-get update && apt-get -y install curl wget sudo git && \
+        uname -m && \
+        dotnet test **/bin/**/${{ matrix.version }}/*.Tests.dll --configuration Release --no-build --logger:"console;verbosity=detailed"'
