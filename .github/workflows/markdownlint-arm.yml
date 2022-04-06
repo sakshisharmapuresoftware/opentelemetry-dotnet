@@ -21,12 +21,5 @@ jobs:
         bash -exc 'apt-get update && apt-get -y install curl sudo && \
         curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash - && \
         sudo apt-get install -y nodejs && \
-        sudo npm install -g markdownlint-cli'
-    - name: run markdownlint
-      run:  |
-        docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
-        arm64v8/ubuntu:latest \
-        bash -exc 'apt-get update && apt-get -y install curl sudo && \
-        curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash - && \
-        sudo apt-get install -y nodejs && \
+        sudo npm install -g markdownlint-cli&& \
         markdownlint .'
