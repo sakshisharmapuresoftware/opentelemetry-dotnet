@@ -3,8 +3,6 @@ name: markdownlint ARM
 on:
   push:
     branches: [ main, metrics ]
-    paths:
-    - '**.md'
 
 jobs:
   build:
