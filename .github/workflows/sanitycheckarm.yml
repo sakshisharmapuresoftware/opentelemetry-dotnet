@@ -22,7 +22,7 @@ jobs:
         arm64v8/ubuntu:latest \
         bash -exc 'apt-get update && apt-get -y install curl && \
         curl -L -o ./install-misspell.sh https://git.io/misspell && \
-        sh ./install-misspell.sh'
+        ./install-misspell.sh'
     - name: run misspell
       run: |
         docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
@@ -43,12 +43,7 @@ jobs:
       run: |
         docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
         arm64v8/ubuntu:latest \
-        bash -exc 'apt-get update && apt-get -y install curl && \
-        apt install software-properties-common -y && \
-        add-apt-repository ppa:deadsnakes/ppa -y && \
-        apt install -y ${{ env.py }}-venv && \
-        python3.7 -m venv .env && \
-        source .env/bin/activate && \
-        pip install --upgrade pip && \
+        bash -exc 'apt-get update && apt-get -y install curl sudo && \
+        sudo apt install python3 && \
         uname -m && \
         python3 ./build/sanitycheck.py'
