@@ -20,15 +20,15 @@ jobs:
       run: |
         docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
         arm64v8/ubuntu:latest \
-        bash -exc 'apt-get update && apt-get -y install curl && \
+        bash -exc 'apt-get update && apt-get -y install curl sudo && \
         curl -L -o ./install-misspell.sh https://git.io/misspell && \
-        ./install-misspell.sh'
+        sudo ./install-misspell.sh'
     - name: run misspell
       run: |
         docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
         arm64v8/ubuntu:latest \
-        bash -exc 'apt-get update && apt-get -y install curl && \
-        ./bin/misspell -error .'
+        bash -exc 'apt-get update && apt-get -y install curl sudo && \
+        sudo ./bin/misspell -error .'
 
   encoding:
     runs-on: ubuntu-latest
@@ -44,6 +44,6 @@ jobs:
         docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
         arm64v8/ubuntu:latest \
         bash -exc 'apt-get update && apt-get -y install curl sudo && \
-        sudo apt install python3 && \
+        sudo apt install -y python3 && \
         uname -m && \
         python3 ./build/sanitycheck.py'
